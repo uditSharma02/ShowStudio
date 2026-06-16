@@ -2,11 +2,13 @@ package com.showstudio.app;
 
 import com.showstudio.core.engine.SimulationEngine;
 import com.showstudio.core.engine.SimulationLoop;
+import com.showstudio.rendering.Renderer;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
@@ -20,20 +22,20 @@ public class MainApp extends Application {
         SimulationLoop loop =
                 new SimulationLoop(engine);
 
-        Label fpsLabel = new Label();
+        Canvas canvas =
+                new Canvas(1400, 800);
 
-        Label timeLabel = new Label();
+        GraphicsContext gc =
+                canvas.getGraphicsContext2D();
 
-        VBox root =
-                new VBox(10);
+        Renderer renderer =
+                new Renderer();
 
-        root.getChildren().addAll(
-                fpsLabel,
-                timeLabel
-        );
+        StackPane root =
+                new StackPane(canvas);
 
         Scene scene =
-                new Scene(root, 1400, 800);
+                new Scene(root);
 
         stage.setTitle("ShowStudio");
 
@@ -48,18 +50,10 @@ public class MainApp extends Application {
             @Override
             public void handle(long now) {
 
-                fpsLabel.setText(
-                        String.format(
-                                "FPS: %.0f",
-                                loop.getFps()
-                        )
-                );
-
-                timeLabel.setText(
-                        String.format(
-                                "Simulation Time: %.2f",
-                                engine.getCurrentTime()
-                        )
+                renderer.render(
+                        gc,
+                        engine,
+                        loop.getFps()
                 );
             }
 
