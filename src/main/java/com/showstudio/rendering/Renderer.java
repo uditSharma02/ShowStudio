@@ -1,5 +1,5 @@
 package com.showstudio.rendering;
-
+import com.showstudio.fireworks.Firework;
 import com.showstudio.core.engine.SimulationEngine;
 import com.showstudio.fireworks.Particle;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,7 +25,7 @@ public class Renderer {
 
         drawParticles(gc, engine);
 
-        drawFirework(gc, engine);
+        drawFireworks(gc, engine);
 
         drawHud(gc, engine, fps);
     }
@@ -62,34 +62,30 @@ public class Renderer {
         );
     }
 
-    private void drawFirework(
+    private void drawFireworks(
             GraphicsContext gc,
             SimulationEngine engine
     ) {
 
-        if (!engine.getFirework().isActive()) {
-            return;
-        }
-
-        double x =
-                engine.getFirework()
-                        .getPosition()
-                        .getX();
-
-        double y =
-                engine.getFirework()
-                        .getPosition()
-                        .getY();
-
         gc.setFill(Color.ORANGE);
 
-        gc.fillOval(
-                x,
-                y,
-                8,
-                8
-        );
+        for(Firework firework :
+                engine.getFireworkManager()
+                        .getFireworks()) {
+
+            if(!firework.isActive()) {
+                continue;
+            }
+
+            gc.fillOval(
+                    firework.getPosition().getX(),
+                    firework.getPosition().getY(),
+                    8,
+                    8
+            );
+        }
     }
+
 
     private void drawParticles(
             GraphicsContext gc,

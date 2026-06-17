@@ -12,12 +12,22 @@ public class Firework extends SimulationObject {
     private final double gravity = 120;
 
     private boolean exploded;
+    private boolean explosionHandled;
+    public boolean isExplosionHandled() {
+        return explosionHandled;
+    }
+    public void setExplosionHandled(boolean explosionHandled) {
+        this.explosionHandled = explosionHandled;
+    }
 
-    public Firework() {
+    public Firework(
+            double startX,
+            double startY
+    ) {
 
         position = new Vector2D(
-                700,
-                720
+                startX,
+                startY
         );
 
         velocity = new Vector2D(

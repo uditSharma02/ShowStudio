@@ -1,6 +1,7 @@
 package com.showstudio.core.engine;
 
 import com.showstudio.fireworks.Firework;
+import com.showstudio.fireworks.FireworkManager;
 import com.showstudio.fireworks.Particle;
 import com.showstudio.physics.Vector2D;
 
@@ -12,7 +13,7 @@ public class SimulationEngine {
 
     private final SimulationClock clock;
 
-    private final Firework firework;
+    private final FireworkManager fireworkManager;
 
     private final List<Particle> particles;
 
@@ -20,7 +21,7 @@ public class SimulationEngine {
 
         clock = new SimulationClock();
 
-        firework = new Firework();
+        fireworkManager = new FireworkManager();
 
         particles = new ArrayList<>();
     }
@@ -29,14 +30,33 @@ public class SimulationEngine {
 
         clock.update(deltaTime);
 
-        firework.update(deltaTime);
+        fireworkManager.update(deltaTime);
 
-        // Create explosion once
-        if (firework.hasExploded()
-                && particles.isEmpty()) {
+        createExplosions();
 
-            createExplosion();
-        }
+        updateParticles(deltaTime);
+    }
+
+    private void createExplosions() {
+
+        fireworkManager.getFireworks()
+                .stream()
+                .filter(Firework::hasExploded)
+                .filter(f -> !f.isExplosionHandled())
+                .forEach(f -> {
+
+                    createExplosion(
+                            f.getPosition().getX(),
+                            f.getPosition().getY()
+                    );
+
+                    f.setExplosionHandled(true);
+                });
+    }
+
+    private void updateParticles(
+            double deltaTime
+    ) {
 
         Iterator<Particle> iterator =
                 particles.iterator();
@@ -55,13 +75,10 @@ public class SimulationEngine {
         }
     }
 
-    private void createExplosion() {
-
-        double centerX =
-                firework.getPosition().getX();
-
-        double centerY =
-                firework.getPosition().getY();
+    private void createExplosion(
+            double centerX,
+            double centerY
+    ) {
 
         int count = 120;
 
@@ -101,9 +118,9 @@ public class SimulationEngine {
         return clock.getSimulationTime();
     }
 
-    public Firework getFirework() {
+    public FireworkManager getFireworkManager() {
 
-        return firework;
+        return fireworkManager;
     }
 
     public List<Particle> getParticles() {
