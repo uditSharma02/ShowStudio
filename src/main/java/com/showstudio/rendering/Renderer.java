@@ -1,6 +1,7 @@
 package com.showstudio.rendering;
 
 import com.showstudio.core.engine.SimulationEngine;
+import com.showstudio.fireworks.Particle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -22,8 +23,11 @@ public class Renderer {
 
         drawGround(gc, width, height);
 
-        drawHud(gc, engine, fps);
+        drawParticles(gc, engine);
+
         drawFirework(gc, engine);
+
+        drawHud(gc, engine, fps);
     }
 
     private void drawSky(
@@ -57,10 +61,15 @@ public class Renderer {
                 80
         );
     }
+
     private void drawFirework(
             GraphicsContext gc,
             SimulationEngine engine
     ) {
+
+        if (!engine.getFirework().isActive()) {
+            return;
+        }
 
         double x =
                 engine.getFirework()
@@ -80,6 +89,25 @@ public class Renderer {
                 8,
                 8
         );
+    }
+
+    private void drawParticles(
+            GraphicsContext gc,
+            SimulationEngine engine
+    ) {
+
+        gc.setFill(Color.YELLOW);
+
+        for (Particle particle :
+                engine.getParticles()) {
+
+            gc.fillOval(
+                    particle.getPosition().getX(),
+                    particle.getPosition().getY(),
+                    4,
+                    4
+            );
+        }
     }
 
     private void drawHud(
@@ -106,6 +134,13 @@ public class Renderer {
                 ),
                 20,
                 55
+        );
+
+        gc.fillText(
+                "Particles: " +
+                        engine.getParticles().size(),
+                20,
+                80
         );
     }
 }

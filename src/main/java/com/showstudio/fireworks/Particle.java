@@ -3,35 +3,26 @@ package com.showstudio.fireworks;
 import com.showstudio.core.object.SimulationObject;
 import com.showstudio.physics.Vector2D;
 
-public class Firework extends SimulationObject {
+public class Particle extends SimulationObject {
 
     private final Vector2D position;
 
     private final Vector2D velocity;
 
-    private final double gravity = 120;
+    private double lifetime = 2.0;
 
-    private boolean exploded;
+    private final double gravity = 100;
 
-    public Firework() {
-
-        position = new Vector2D(
-                700,
-                720
-        );
-
-        velocity = new Vector2D(
-                0,
-                -300
-        );
+    public Particle(
+            Vector2D position,
+            Vector2D velocity
+    ) {
+        this.position = position;
+        this.velocity = velocity;
     }
 
     @Override
     public void update(double deltaTime) {
-
-        if (!active) {
-            return;
-        }
 
         velocity.setY(
                 velocity.getY()
@@ -48,11 +39,9 @@ public class Firework extends SimulationObject {
                         + velocity.getY() * deltaTime
         );
 
-        // Firework reaches highest point
-        if (velocity.getY() >= 0) {
+        lifetime -= deltaTime;
 
-            exploded = true;
-
+        if (lifetime <= 0) {
             active = false;
         }
     }
@@ -61,7 +50,7 @@ public class Firework extends SimulationObject {
         return position;
     }
 
-    public boolean hasExploded() {
-        return exploded;
+    public double getLifetime() {
+        return lifetime;
     }
 }
