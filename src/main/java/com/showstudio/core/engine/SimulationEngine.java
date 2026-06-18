@@ -3,6 +3,8 @@ package com.showstudio.core.engine;
 import com.showstudio.fireworks.FireworkManager;
 import com.showstudio.fireworks.Particle;
 import com.showstudio.fireworks.patterns.RingExplosion;
+import com.showstudio.fireworks.patterns.StarExplosion;
+import java.util.Random;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,11 +14,16 @@ public class SimulationEngine {
 
     private final SimulationClock clock;
 
+
     private final FireworkManager fireworkManager;
 
     private final List<Particle> particles;
 
     private final RingExplosion ringExplosion;
+
+    private final StarExplosion starExplosion;
+
+    private final Random random;
 
     public SimulationEngine() {
 
@@ -27,6 +34,10 @@ public class SimulationEngine {
         particles = new ArrayList<>();
 
         ringExplosion = new RingExplosion();
+
+        starExplosion = new StarExplosion();
+
+        random = new Random();
     }
 
     public void update(double deltaTime) {
@@ -48,14 +59,28 @@ public class SimulationEngine {
                 .filter(f -> !f.isExplosionHandled())
                 .forEach(f -> {
 
-                    particles.addAll(
+                    if(random.nextBoolean()) {
 
-                            ringExplosion.create(
+                        particles.addAll(
 
-                                    f.getPosition().getX(),
-                                    f.getPosition().getY()
-                            )
-                    );
+                                ringExplosion.create(
+
+                                        f.getPosition().getX(),
+                                        f.getPosition().getY()
+                                )
+                        );
+                    }
+                    else {
+
+                        particles.addAll(
+
+                                starExplosion.create(
+
+                                        f.getPosition().getX(),
+                                        f.getPosition().getY()
+                                )
+                        );
+                    }
 
                     f.setExplosionHandled(true);
                 });
