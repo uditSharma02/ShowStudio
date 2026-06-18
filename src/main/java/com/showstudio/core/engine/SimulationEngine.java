@@ -1,9 +1,8 @@
 package com.showstudio.core.engine;
 
-import com.showstudio.fireworks.Firework;
 import com.showstudio.fireworks.FireworkManager;
 import com.showstudio.fireworks.Particle;
-import com.showstudio.physics.Vector2D;
+import com.showstudio.fireworks.patterns.RingExplosion;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +16,8 @@ public class SimulationEngine {
 
     private final List<Particle> particles;
 
+    private final RingExplosion ringExplosion;
+
     public SimulationEngine() {
 
         clock = new SimulationClock();
@@ -24,6 +25,8 @@ public class SimulationEngine {
         fireworkManager = new FireworkManager();
 
         particles = new ArrayList<>();
+
+        ringExplosion = new RingExplosion();
     }
 
     public void update(double deltaTime) {
@@ -41,13 +44,17 @@ public class SimulationEngine {
 
         fireworkManager.getFireworks()
                 .stream()
-                .filter(Firework::hasExploded)
+                .filter(f -> f.hasExploded())
                 .filter(f -> !f.isExplosionHandled())
                 .forEach(f -> {
 
-                    createExplosion(
-                            f.getPosition().getX(),
-                            f.getPosition().getY()
+                    particles.addAll(
+
+                            ringExplosion.create(
+
+                                    f.getPosition().getX(),
+                                    f.getPosition().getY()
+                            )
                     );
 
                     f.setExplosionHandled(true);
@@ -72,44 +79,6 @@ public class SimulationEngine {
 
                 iterator.remove();
             }
-        }
-    }
-
-    private void createExplosion(
-            double centerX,
-            double centerY
-    ) {
-
-        int count = 120;
-
-        for (int i = 0; i < count; i++) {
-
-            double angle =
-                    (2 * Math.PI * i) / count;
-
-            double speed = 150;
-
-            double vx =
-                    Math.cos(angle) * speed;
-
-            double vy =
-                    Math.sin(angle) * speed;
-
-            particles.add(
-
-                    new Particle(
-
-                            new Vector2D(
-                                    centerX,
-                                    centerY
-                            ),
-
-                            new Vector2D(
-                                    vx,
-                                    vy
-                            )
-                    )
-            );
         }
     }
 

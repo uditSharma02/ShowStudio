@@ -92,11 +92,13 @@ public class Renderer {
             SimulationEngine engine
     ) {
 
-        gc.setFill(Color.YELLOW);
+
 
         for (Particle particle :
                 engine.getParticles()) {
-
+            gc.setFill(
+                    particle.getColor()
+            );
             gc.fillOval(
                     particle.getPosition().getX(),
                     particle.getPosition().getY(),

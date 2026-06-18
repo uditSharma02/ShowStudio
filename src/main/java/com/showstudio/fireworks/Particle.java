@@ -2,6 +2,7 @@ package com.showstudio.fireworks;
 
 import com.showstudio.core.object.SimulationObject;
 import com.showstudio.physics.Vector2D;
+import javafx.scene.paint.Color;
 
 public class Particle extends SimulationObject {
 
@@ -12,13 +13,19 @@ public class Particle extends SimulationObject {
     private double lifetime = 2.0;
 
     private final double gravity = 100;
+    private final Color color;
 
     public Particle(
             Vector2D position,
-            Vector2D velocity
+            Vector2D velocity,
+            Color color
     ) {
         this.position = position;
         this.velocity = velocity;
+        this.color = color;
+    }
+    public Color getColor() {
+        return color;
     }
 
     @Override
