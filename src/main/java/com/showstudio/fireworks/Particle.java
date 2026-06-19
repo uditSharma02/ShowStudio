@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 public class Particle extends SimulationObject {
 
     private final Vector2D position;
+    private final double maxLifetime = 2.0;
 
     private final Vector2D velocity;
 
@@ -14,7 +15,13 @@ public class Particle extends SimulationObject {
 
     private final double gravity = 100;
     private final Color color;
+    public double getOpacity() {
 
+        return Math.max(
+                0,
+                lifetime / maxLifetime
+        );
+    }
     public Particle(
             Vector2D position,
             Vector2D velocity,

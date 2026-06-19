@@ -2,18 +2,18 @@ package com.showstudio.core.engine;
 
 import com.showstudio.fireworks.FireworkManager;
 import com.showstudio.fireworks.Particle;
+import com.showstudio.fireworks.patterns.HeartExplosion;
 import com.showstudio.fireworks.patterns.RingExplosion;
 import com.showstudio.fireworks.patterns.StarExplosion;
-import java.util.Random;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class SimulationEngine {
 
     private final SimulationClock clock;
-
 
     private final FireworkManager fireworkManager;
 
@@ -22,6 +22,8 @@ public class SimulationEngine {
     private final RingExplosion ringExplosion;
 
     private final StarExplosion starExplosion;
+
+    private final HeartExplosion heartExplosion;
 
     private final Random random;
 
@@ -36,6 +38,8 @@ public class SimulationEngine {
         ringExplosion = new RingExplosion();
 
         starExplosion = new StarExplosion();
+
+        heartExplosion = new HeartExplosion();
 
         random = new Random();
     }
@@ -59,7 +63,10 @@ public class SimulationEngine {
                 .filter(f -> !f.isExplosionHandled())
                 .forEach(f -> {
 
-                    if(random.nextBoolean()) {
+                    int pattern =
+                            random.nextInt(3);
+
+                    if(pattern == 0) {
 
                         particles.addAll(
 
@@ -70,11 +77,22 @@ public class SimulationEngine {
                                 )
                         );
                     }
-                    else {
+                    else if(pattern == 1) {
 
                         particles.addAll(
 
                                 starExplosion.create(
+
+                                        f.getPosition().getX(),
+                                        f.getPosition().getY()
+                                )
+                        );
+                    }
+                    else {
+
+                        particles.addAll(
+
+                                heartExplosion.create(
 
                                         f.getPosition().getX(),
                                         f.getPosition().getY()
@@ -93,14 +111,14 @@ public class SimulationEngine {
         Iterator<Particle> iterator =
                 particles.iterator();
 
-        while (iterator.hasNext()) {
+        while(iterator.hasNext()) {
 
             Particle particle =
                     iterator.next();
 
             particle.update(deltaTime);
 
-            if (!particle.isActive()) {
+            if(!particle.isActive()) {
 
                 iterator.remove();
             }

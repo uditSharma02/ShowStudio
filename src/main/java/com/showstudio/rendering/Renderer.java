@@ -96,6 +96,10 @@ public class Renderer {
 
         for (Particle particle :
                 engine.getParticles()) {
+            gc.setGlobalAlpha(
+                    particle.getOpacity()
+            );
+
             gc.setFill(
                     particle.getColor()
             );
@@ -106,6 +110,7 @@ public class Renderer {
                     4
             );
         }
+        gc.setGlobalAlpha(1.0);
     }
 
     private void drawHud(
