@@ -10,6 +10,7 @@ public class Firework extends SimulationObject {
     private final Vector2D velocity;
 
     private final double gravity = 120;
+    private String explosionType = "RING";
 
     private boolean exploded;
     private boolean explosionHandled;
@@ -22,7 +23,8 @@ public class Firework extends SimulationObject {
 
     public Firework(
             double startX,
-            double startY
+            double startY,
+            String explosionType
     ) {
 
         position = new Vector2D(
@@ -34,6 +36,12 @@ public class Firework extends SimulationObject {
                 0,
                 -300
         );
+
+        this.explosionType =
+                explosionType;
+    }
+    public String getExplosionType() {
+        return explosionType;
     }
 
     @Override

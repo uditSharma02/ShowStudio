@@ -19,19 +19,25 @@ public class FireworkManager {
 
         random = new Random();
 
-        launchFirework();
+        // Initial firework
+       //   launchFirework();
     }
 
     public void update(double deltaTime) {
 
-        launchTimer += deltaTime;
+        /*
+         * Timeline System use kar rahe hain.
+         * Isliye auto launch temporarily disable hai.
+         */
 
-        if (launchTimer >= 1.5) {
-
-            launchTimer = 0;
-
-            launchFirework();
-        }
+        // launchTimer += deltaTime;
+        //
+        // if (launchTimer >= 1.5) {
+        //
+        //     launchTimer = 0;
+        //
+        //     launchFirework();
+        // }
 
         Iterator<Firework> iterator =
                 fireworks.iterator();
@@ -51,12 +57,28 @@ public class FireworkManager {
         }
     }
 
-    private void launchFirework() {
+    public void launchFirework(
+            String explosionType
+    ) {
 
         double x =
                 200 + random.nextInt(1000);
 
         fireworks.add(
+
+                new Firework(
+                        x,
+                        720,
+                        explosionType
+                )
+        );
+    }{
+
+        double x =
+                200 + random.nextInt(1000);
+
+        fireworks.add(
+
                 new Firework(
                         x,
                         720
@@ -65,6 +87,7 @@ public class FireworkManager {
     }
 
     public List<Firework> getFireworks() {
+
         return fireworks;
     }
 }

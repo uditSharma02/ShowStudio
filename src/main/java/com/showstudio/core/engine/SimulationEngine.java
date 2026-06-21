@@ -5,11 +5,12 @@ import com.showstudio.fireworks.Particle;
 import com.showstudio.fireworks.patterns.HeartExplosion;
 import com.showstudio.fireworks.patterns.RingExplosion;
 import com.showstudio.fireworks.patterns.StarExplosion;
+import com.showstudio.timeline.TimelineEvent;
+import com.showstudio.timeline.TimelineScheduler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class SimulationEngine {
 
@@ -25,7 +26,7 @@ public class SimulationEngine {
 
     private final HeartExplosion heartExplosion;
 
-    private final Random random;
+    private final TimelineScheduler timelineScheduler;
 
     public SimulationEngine() {
 
@@ -41,18 +42,41 @@ public class SimulationEngine {
 
         heartExplosion = new HeartExplosion();
 
-        random = new Random();
+        timelineScheduler = new TimelineScheduler();
     }
 
     public void update(double deltaTime) {
 
         clock.update(deltaTime);
 
+        processTimeline();
+
         fireworkManager.update(deltaTime);
 
         createExplosions();
 
         updateParticles(deltaTime);
+    }
+
+    private void processTimeline() {
+
+        for (TimelineEvent event :
+                timelineScheduler.getEvents()) {
+
+            if (event.isExecuted()) {
+                continue;
+            }
+
+            if (getCurrentTime()
+                    >= event.getTriggerTime()) {
+
+                fireworkManager.launchFirework(
+                        event.getEventType()
+                );
+
+                event.setExecuted(true);
+            }
+        }
     }
 
     private void createExplosions() {
@@ -63,10 +87,10 @@ public class SimulationEngine {
                 .filter(f -> !f.isExplosionHandled())
                 .forEach(f -> {
 
-                    int pattern =
-                            random.nextInt(3);
+                    String type =
+                            f.getExplosionType();
 
-                    if(pattern == 0) {
+                    if (type.equals("RING")) {
 
                         particles.addAll(
 
@@ -77,7 +101,7 @@ public class SimulationEngine {
                                 )
                         );
                     }
-                    else if(pattern == 1) {
+                    else if (type.equals("STAR")) {
 
                         particles.addAll(
 
@@ -88,7 +112,7 @@ public class SimulationEngine {
                                 )
                         );
                     }
-                    else {
+                    else if (type.equals("HEART")) {
 
                         particles.addAll(
 
@@ -111,14 +135,14 @@ public class SimulationEngine {
         Iterator<Particle> iterator =
                 particles.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
 
             Particle particle =
                     iterator.next();
 
             particle.update(deltaTime);
 
-            if(!particle.isActive()) {
+            if (!particle.isActive()) {
 
                 iterator.remove();
             }
@@ -138,5 +162,10 @@ public class SimulationEngine {
     public List<Particle> getParticles() {
 
         return particles;
+    }
+
+    public TimelineScheduler getTimelineScheduler() {
+
+        return timelineScheduler;
     }
 }
